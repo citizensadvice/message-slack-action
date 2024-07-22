@@ -35,12 +35,18 @@ runs:
     - name: Format Commit Message
       shell: bash
       id: commit
-      run: echo message=$(echo "$(git log -1 --pretty=format:"%s")" | head -1) >> "$GITHUB_OUTPUT"
+      run: echo message=$(git log -1 --pretty=format:"%s" | head -1) >> "$GITHUB_OUTPUT"
 
     - name: Format Commit Hash
       shell: bash 
       id: hash
       run: echo hash=$(echo "${{ github.sha }}" | head -c 7) >> "$GITHUB_OUTPUT"
+
+    - name: Get Commit Author
+      shell: bash
+      id: author
+      run: |
+        echo author=$(git log -1 --pretty=format:"%an") >> "$GITHUB_OUTPUT"
     
     - name: Notify Slack
       id: deployment_message
@@ -108,7 +114,7 @@ runs:
                   },
                   {
                     "type": "mrkdwn",
-                    "text": "*Commit Author:*\n<${{ github.server_url }}/${{ github.event.head_commit.author.username }}|${{ github.event.head_commit.author.username }}>"
+                    "text": "*Commit Author:*\n${{ steps.author.outputs.author }}"
                   }
                 ]
               }
