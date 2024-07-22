@@ -2,10 +2,9 @@ name: Test Workflow
 
 on: 
   - workflow_dispatch
-  - push
 
 env:
-  TEST_CHANNEL: "C07AGEKN0CB"
+  TEST_CHANNEL: "C07AGEKN0CB" #matt-test-channel
 
 jobs:
   test-success:
@@ -53,4 +52,3 @@ jobs:
           channel_id: ${{ env.TEST_CHANNEL }}
           slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-
