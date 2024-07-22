@@ -18,6 +18,9 @@ inputs:
   slack_bot_token:
     description: Slack bot token
     required: true
+  github_token:
+    description: Github token
+    required: true
 
 outputs:
   message_ts:
@@ -115,7 +118,7 @@ runs:
       id: failing_jobs
       if: inputs.failure == 'true'
       env:
-        GH_TOKEN: ${{ inputs.slack_bot_token }}
+        GH_TOKEN: ${{ inputs.github_token }}
       run: |
         echo jobs=$(gh run view ${{ github.run_id }} --repo ${{ github.repository }} --json jobs | jq '.jobs[] | select(.conclusion == "failure")' | jq -rs '.[] | "• <\(.url)|\(.name)>"') >> $GITHUB_OUTPUT
         # There is a lot going on here so I will break it down step-by-step:

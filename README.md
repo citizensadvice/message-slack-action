@@ -64,6 +64,7 @@ jobs:
           message: 'The deployment has succeeded'
           channel_id: 'C0123456789'
           slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
   notify-failure:
     name: Notify Slack on Failure
@@ -79,4 +80,5 @@ jobs:
           failure: 'true'
           channel_id: 'C0123456789'
           slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 ```

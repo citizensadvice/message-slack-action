@@ -17,6 +17,7 @@ jobs:
           message: 'Testing the normal message'
           channel_id: ${{ env.TEST_CHANNEL }}
           slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
     
       - name: Notify Slack
         uses: citizensadvice/message-slack-action@v1
@@ -26,4 +27,5 @@ jobs:
           failure: 'true'
           channel_id: ${{ env.TEST_CHANNEL }}
           slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
