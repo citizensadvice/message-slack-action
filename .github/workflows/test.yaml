@@ -18,13 +18,16 @@ jobs:
           channel_id: ${{ env.TEST_CHANNEL }}
           slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Trigger failure
+        run: exit 1
     
       - name: Notify Slack
         uses: citizensadvice/message-slack-action@v1
+        if: always()
         with:
           title: 'Testing Message'
           message: 'Testing the failure message'
-          failure: 'true'
           channel_id: ${{ env.TEST_CHANNEL }}
           slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}

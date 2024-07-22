@@ -8,10 +8,6 @@ inputs:
   message:
     description: Message to be sent
     required: true
-  failure:
-    description: If the status of the workflow run is failure
-    required: false
-    default: "false"
   channel_id:
     description: Channel IDs to send the notification to
     required: true
@@ -119,10 +115,9 @@ runs:
             ]
           }
     
-    - name: Get Failing Jobs
+    - name: Find Failing Jobs
       shell: bash
       id: failing_jobs
-      if: inputs.failure == 'true'
       env:
         GH_TOKEN: ${{ inputs.github_token }}
       run: |
@@ -134,8 +129,7 @@ runs:
 
     - name: Comment Failing Jobs
       uses: slackapi/slack-github-action@v1.26.0
-      if: inputs.failure == 'true' && steps.failing_jobs.outputs.jobs != ''
-
+      if: steps.failing_jobs.outputs.jobs != ''
       env:
         SLACK_BOT_TOKEN: ${{ inputs.slack_bot_token }}
       with:

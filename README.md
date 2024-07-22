@@ -13,7 +13,7 @@ By default, it will send a notification with the following information:
 - Commit hash
 - Commit author
 
-When a workflow fails, it can reply to the original message with a list of failed jobs.
+If a job within the workflow run fails, the action will reply to the original message with a list of failed jobs.
 
 ## Authentication
 
@@ -25,7 +25,6 @@ To use this action, you need to provide a Slack bot token with the necessary per
 | ----------------- | --------------------------------------------------------------- | -------- | ------- |
 | `title`           | Title of the notification                                       | Yes      |         |
 | `message`         | Message body                                                    | Yes      |         |
-| `failure`         | If the status of the workflow run is failure                    | No       | false   |
 | `channel_id`      | Comma separated list of channel IDs to send the notification to | Yes      |         |
 | `slack_bot_token` | Slack bot token                                                 | Yes      |         |
 
