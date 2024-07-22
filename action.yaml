@@ -1,0 +1,156 @@
+name: Send Slack Notification
+description: Send a notification to Slack 
+
+inputs:
+  title:
+    description: Title of the notification
+    required: true
+  message:
+    description: Message to be sent
+    required: true
+  failure:
+    description: If the status of the workflow run is failure
+    required: false
+    default: "false"
+  channel_id:
+    description: Channel IDs to send the notification to
+    required: true
+  slack_bot_token:
+    description: Slack bot token
+    required: true
+  reply_with_failed_jobs:
+    description: If the status of the workflow run is failure, reply with the failed jobs
+    required: false
+    default: "true"
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Format Commit Message
+      shell: bash
+      id: commit
+      run: echo message=$(echo "${{ github.event.head_commit.message }}" | head -1) >> "$GITHUB_OUTPUT"
+
+    - name: Format Commit Hash
+      shell: bash 
+      id: hash
+      run: echo hash=$(echo "${{ github.sha }}" | head -c 7) >> "$GITHUB_OUTPUT"
+    
+    - name: Notify Slack
+      shell: bash
+      id: deployment_message
+      uses: slackapi/slack-github-action@v1.26.0
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.slack_bot_token }}
+      with:
+        channel-id: '${{ inputs.channel_id }}'
+        payload: |
+          {
+            "unfurl_links": false,
+            "unfurl_media": false,
+            "text": "${{ inputs.title }}",
+            "blocks": [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": "${{ inputs.title }}",
+                  "emoji": true
+                }
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": ${{ toJson(inputs.message) }}
+                }
+              },
+              {
+                "type": "divider"
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*Head Commit Message:*\n```${{ steps.commit.outputs.message }}```"
+                }
+              },
+              {
+                "type": "divider"
+              },
+              {
+                "type": "section",
+                "fields": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Event:*\n${{ github.event_name	}}"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Triggered By:*\n<${{ github.server_url }}/${{ github.triggering_actor }}|${{ github.triggering_actor }}>"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Branch:*\n<${{ github.server_url }}/${{ github.repository }}/tree/${{ github.ref_name }}|${{ github.ref_name }}>"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Workflow:*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.workflow }}>"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Commit:*\n<${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}|${{ steps.hash.outputs.hash }}>"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Commit Author:*\n<${{ github.server_url }}/${{ github.event.head_commit.author.username }}|${{ github.event.head_commit.author.username }}>"
+                  }
+                ]
+              }
+            ]
+          }
+    
+    - name: Get Failing Jobs
+      shell: bash
+      id: failing_jobs
+      if: inputs.failure == 'true'
+      env:
+        GH_TOKEN: ${{ inputs.slack_bot_token }}
+      run: |
+        echo jobs=$(gh run view ${{ github.run_id }} --repo ${{ github.repository }} --json jobs | jq '.jobs[] | select(.conclusion == "failure")' | jq -rs '.[] | "• <\(.url)|\(.name)>"') >> $GITHUB_OUTPUT
+        # There is a lot going on here so I will break it down step-by-step:
+        # - Get the job info from the current (failed) workflow run in JSON format
+        # - Pipe it to jq to get only the jobs that failed
+        # - Pipe that back into jq and construct a Slack link with the job name and URL
+
+    - name: Comment Failing Jobs
+      shell: bash
+      uses: slackapi/slack-github-action@v1.26.0
+      if: inputs.failure == 'true' && inputs.reply_with_failed_jobs == 'true'
+      env:
+        SLACK_BOT_TOKEN: ${{ inputs.slack_bot_token }}
+      with:
+        channel-id: '${{ inputs.channel_id }}'
+        payload: |
+          {
+            "thread_ts": "${{ steps.deployment_message.outputs.ts }}",
+            "unfurl_links": false,
+            "unfurl_media": false,
+            "text": "Failing Jobs:",
+            "blocks": [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": "Failing Jobs:"
+                }
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": ${{ toJson(steps.failing_jobs.outputs.jobs) }}
+                }
+              }
+            ]
+          }
