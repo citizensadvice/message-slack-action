@@ -1,6 +1,8 @@
 name: Test Workflow
 
-on: workflow_dispatch
+on: 
+  - workflow_dispatch
+  - push
 
 env:
   TEST_CHANNEL: "C07AGEKN0CB"
@@ -22,6 +24,7 @@ jobs:
   fail-1:
     name: Test Failure
     runs-on: ubuntu-latest
+    needs: test-success
     steps:
       - name: Trigger failure
         run: exit 1
@@ -29,6 +32,7 @@ jobs:
   fail-2:
     name: Test Failure
     runs-on: ubuntu-latest
+    needs: test-success
     steps:
       - name: Trigger failure
         run: exit 1
