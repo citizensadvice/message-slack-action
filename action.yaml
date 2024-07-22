@@ -111,6 +111,7 @@ runs:
           }
     
     - name: Get Failing Jobs
+      shell: bash
       id: failing_jobs
       if: inputs.failure == 'true'
       env:
