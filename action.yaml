@@ -30,10 +30,16 @@ outputs:
 runs:
   using: 'composite'
   steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        sparse-checkout: .github
+        sparse-checkout-cone-mode: false
+
     - name: Format Commit Message
       shell: bash
       id: commit
-      run: echo message=$(echo "${{ github.event.head_commit.message }}" | head -1) >> "$GITHUB_OUTPUT"
+      run: echo message=$(echo "$(git log -1 --pretty=format:"%s")" | head -1) >> "$GITHUB_OUTPUT"
 
     - name: Format Commit Hash
       shell: bash 
