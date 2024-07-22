@@ -127,7 +127,7 @@ runs:
       env:
         GH_TOKEN: ${{ inputs.github_token }}
       run: |
-        echo jobs=$(gh run view ${{ github.run_id }} --repo ${{ github.repository }} --json jobs | jq '.jobs[] | select(.conclusion == "failure")' | jq -rs '.[] | "• <\(.url)|\(.name)>"') >> $GITHUB_OUTPUT
+        echo jobs=$(gh run view ${{ github.run_id }} --repo ${{ github.repository }} --json jobs | jq '.jobs[] | select(.conclusion == "failure")' | jq -rs '.[] | "• <\(.url)|\(.name)>\n"') >> $GITHUB_OUTPUT
         # There is a lot going on here so I will break it down step-by-step:
         # - Get the job info from the current (failed) workflow run in JSON format
         # - Pipe it to jq to get only the jobs that failed
