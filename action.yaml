@@ -134,7 +134,8 @@ runs:
 
     - name: Comment Failing Jobs
       uses: slackapi/slack-github-action@v1.26.0
-      if: inputs.failure == 'true'
+      if: inputs.failure == 'true' && steps.failing_jobs.outputs.jobs != ''
+
       env:
         SLACK_BOT_TOKEN: ${{ inputs.slack_bot_token }}
       with:
