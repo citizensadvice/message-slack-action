@@ -21,17 +21,19 @@ To use this action, you need to provide a Slack bot token with the necessary per
 
 ## Inputs
 
-| Input                    | Description                                                              | Required | Default |
-| ------------------------ | ------------------------------------------------------------------------ | -------- | ------- |
-| `title`                  | Title of the notification                                                | Yes      |         |
-| `message`                | Message body                                                             | Yes      |         |
-| `failure`                | If the status of the workflow run is failure                             | No       | false   |
-| `channel_id`             | Comma separated list of channel IDs to send the notification to          | Yes      |         |
-| `slack_bot_token`        | Slack bot token                                                          | Yes      |         |
+| Input             | Description                                                     | Required | Default |
+| ----------------- | --------------------------------------------------------------- | -------- | ------- |
+| `title`           | Title of the notification                                       | Yes      |         |
+| `message`         | Message body                                                    | Yes      |         |
+| `failure`         | If the status of the workflow run is failure                    | No       | false   |
+| `channel_id`      | Comma separated list of channel IDs to send the notification to | Yes      |         |
+| `slack_bot_token` | Slack bot token                                                 | Yes      |         |
 
 ## Outputs
 
-This action does not provide any outputs.
+| Output       | Description             |
+| ------------ | ----------------------- |
+| `message_ts` | Slack message timestamp |
 
 ## Example usage
 
@@ -56,7 +58,7 @@ jobs:
     needs: deploy
     steps:
       - name: Notify Slack
-        uses: your-org/send-slack-notification-action@v1
+        uses: citizensadvice/message-slack-action@v1
         with:
           title: 'Deployment Success'
           message: 'The deployment has succeeded'
@@ -70,7 +72,7 @@ jobs:
     if: failure()
     steps:
       - name: Notify Slack
-        uses: your-org/send-slack-notification-action@v1
+        uses: citizensadvice/message-slack-action@v1
         with:
           title: 'Deployment Failed'
           message: 'The deployment has failed. Please check the details below.'

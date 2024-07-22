@@ -19,6 +19,11 @@ inputs:
     description: Slack bot token
     required: true
 
+outputs:
+  message_ts:
+    description: Slack message timestamp
+    value: ${{ steps.deployment_message.outputs.message_ts }}
+
 runs:
   using: 'composite'
   steps:
