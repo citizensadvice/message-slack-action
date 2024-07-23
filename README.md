@@ -1,15 +1,17 @@
 # Send Slack Notification Action
 
-Send a notification to Slack in one action. This action can be used to send customized notifications to Slack channels with information about the GitHub workflow run.
+**Send a notification to Slack in one action.** This action can be used to send customized notifications to Slack channels with information about the GitHub workflow run and job failures.
 
-By default, it will send a notification with the following information:
+![Example Message](example.png)
+
+By default, it will send a notification with the following information with links where available:
 
 - Custom title and message
 - Head commit message
 - Event type
 - Triggering user
-- Branch
-- Workflow
+- Ref (Branch or Tag)
+- Workflow run
 - Commit hash
 - Commit author
 
@@ -21,12 +23,12 @@ To use this action, you need to provide a Slack bot token with the necessary per
 
 ## Inputs
 
-| Input             | Description                                                     | Required | Default |
-| ----------------- | --------------------------------------------------------------- | -------- | ------- |
-| `title`           | Title of the notification                                       | Yes      |         |
-| `message`         | Message body                                                    | Yes      |         |
-| `channel_id`      | Comma separated list of channel IDs to send the notification to | Yes      |         |
-| `slack_bot_token` | Slack bot token                                                 | Yes      |         |
+| Input             | Description                                                     | Required |
+| ----------------- | --------------------------------------------------------------- | -------- |
+| `title`           | Title of the notification                                       | Yes      |
+| `message`         | Message body                                                    | Yes      |
+| `channel_id`      | Comma separated list of channel IDs to send the notification to | Yes      |
+| `slack_bot_token` | Slack bot token                                                 | Yes      |
 
 ## Outputs
 
