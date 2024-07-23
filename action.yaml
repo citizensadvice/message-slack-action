@@ -136,10 +136,21 @@ runs:
         GH_TOKEN: ${{ inputs.github_token }}
       run: |
         echo jobs=$(gh run view ${{ github.run_id }} --repo ${{ github.repository }} --json jobs | jq '.jobs[] | select(.conclusion == "failure")' | jq -rsc '[.[] | {"type": "section", "text": {"type": "mrkdwn", "text": "• <\(.url)|\(.name)>"}}]' | sed 's/[][]//g') >> $GITHUB_OUTPUT
-        # There is a lot going on here so I will break it down step-by-step:
-        # - Get the job info from the current (failed) workflow run in JSON format
-        # - Pipe it to jq to get only the jobs that failed
-        # - Pipe that back into jq and construct a Slack link with the job name and URL
+            # Explanation of this approach:
+            # 1. Use GitHub CLI to fetch job information for the current workflow run.
+            # 2. Use jq to filter out only the failed jobs.
+            # 3. Use jq again to transform each failed job into a Slack block format:
+            #    - Create a "section" block for each job
+            #    - Use "mrkdwn" text type to allow for formatting
+            #    - Format each job as a bullet point with a clickable link
+            # 4. The -rsc options in jq ensure raw output (-r), slurp input (-s), and compact output (-c).
+            # 5. Use sed to remove outer square brackets, allowing direct insertion into Slack payload.
+            # 
+            # This approach was chosen because:
+            # - It handles formatting and structure in a single step, reducing complexity.
+            # - It directly creates Slack-compatible block structures, ensuring correct formatting in Slack.
+            # - It avoids issues with newline characters and JSON escaping.
+            # - It's more robust and maintainable than trying to format the text after the fact.
 
     - name: Comment Failing Jobs
       uses: slackapi/slack-github-action@v1.26.0
