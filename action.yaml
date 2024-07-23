@@ -26,16 +26,10 @@ outputs:
 runs:
   using: 'composite'
   steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        sparse-checkout: .github
-        sparse-checkout-cone-mode: false
-
-    - name: Format Commit Message
+    - name: Get Commit Message
       shell: bash
       id: commit
-      run: echo message=$(git log -1 --pretty=format:"%s" | head -1) >> "$GITHUB_OUTPUT"
+      run: echo message=$(gh api /repos/${{ github.repository }}/git/commits/${{ github.sha }} --jq '.message') >> "$GITHUB_OUTPUT"
 
     - name: Format Commit Hash
       shell: bash 
@@ -46,8 +40,16 @@ runs:
       shell: bash
       id: author
       run: |
-        echo author=$(git log -1 --pretty=format:"%an") >> "$GITHUB_OUTPUT"
+        echo name=$(gh api /repos/${{ github.repository }}/commits/${{ github.sha }} --jq '.author.login') >> "$GITHUB_OUTPUT"
+        echo url=$(gh api /repos/${{ github.repository }}/commits/${{ github.sha }} --jq '.author.html_url')
     
+    - name: Get Triggering Actor URL
+      shell: bash
+      id: triggering-actor
+      run: |
+        echo url=$(gh api /users/${{ github.triggering_actor }} --jq '.html_url') >> "$GITHUB_OUTPUT"
+
+
     - name: Notify Slack
       id: deployment_message
       uses: slackapi/slack-github-action@v1.26.0
@@ -98,11 +100,11 @@ runs:
                   },
                   {
                     "type": "mrkdwn",
-                    "text": "*Triggered By:*\n<${{ github.server_url }}/${{ github.triggering_actor }}|${{ github.triggering_actor }}>"
+                    "text": "*Triggered By:*\n<${{ steps.triggering-actor.outputs.url }}|${{ github.triggering_actor }}>"
                   },
                   {
                     "type": "mrkdwn",
-                    "text": "*Branch:*\n<${{ github.server_url }}/${{ github.repository }}/tree/${{ github.ref_name }}|${{ github.ref_name }}>"
+                    "text": "*Branch:*\n${{ github.ref_type }} <${{ github.server_url }}/${{ github.repository }}/tree/${{ github.ref_name }}|${{ github.ref_name }}>"
                   },
                   {
                     "type": "mrkdwn",
@@ -114,7 +116,7 @@ runs:
                   },
                   {
                     "type": "mrkdwn",
-                    "text": "*Commit Author:*\n${{ steps.author.outputs.author }}"
+                    "text": "*Commit Author:*\n<${{ steps.author.outputs.url }}|${{ steps.author.outputs.name }}>"
                   }
                 ]
               }
