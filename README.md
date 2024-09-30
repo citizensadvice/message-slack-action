@@ -28,7 +28,10 @@ To use this action, you need to provide a Slack bot token with the necessary per
 | `title`           | Title of the notification                                       | Yes      |
 | `message`         | Message body                                                    | Yes      |
 | `channel_id`      | Comma separated list of channel IDs to send the notification to | Yes      |
-| `slack_bot_token` | Slack bot token                                                 | Yes      |
+| `slack_bot_token` | Slack bot token (See tip below)                                 | Yes      |
+
+> [!TIP]
+> There is an organisation-wide secret `SLACK_BOT_TOKEN` which you can use in private repositories for `slack_bot_token` input. For example, `slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}`
 
 ## Outputs
 
