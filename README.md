@@ -2,7 +2,7 @@
 
 **Send a notification to Slack in one action.** This action can be used to send customized notifications to Slack channels with information about the GitHub workflow run and job failures.
 
-![Example Message](example.png)
+![Example Message](examples/message-example.png)
 
 By default, it will send a notification with the following information with links where available:
 
@@ -15,7 +15,9 @@ By default, it will send a notification with the following information with link
 - Commit hash
 - Commit author
 
-If a job within the workflow run fails, the action will reply to the original message with a list of failed jobs.
+If a job within the workflow run fails, the action will reply to the original message with a list of failed jobs:
+
+![Example Message](examples/comment-example.png)
 
 ## Authentication
 
@@ -28,10 +30,10 @@ To use this action, you need to provide a Slack bot token with the necessary per
 | `title`           | Title of the notification                                       | Yes      |
 | `message`         | Message body                                                    | Yes      |
 | `channel_id`      | Comma separated list of channel IDs to send the notification to | Yes      |
-| `slack_bot_token` | Slack bot token (See tip below)                                 | Yes      |
+| `slack_bot_token` | Slack bot token                                                 | Yes      |
 
 > [!TIP]
-> There is an organisation-wide secret `SLACK_BOT_TOKEN` which you can use in private repositories for `slack_bot_token` input. For example, `slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}`
+> For Citizens Advice repositories there is an organisation-wide secret `SLACK_BOT_TOKEN` which you can use in private repositories for `slack_bot_token` input. For example, `slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}`
 
 ## Outputs
 
@@ -86,3 +88,11 @@ jobs:
           slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
+
+## Releases
+
+The release `v1` will be updated to point to a new tag when bug fixes are made. This is done with:
+
+`git tag -f v1 && git push --tags --force`
+
+New releases will be create if the interfaces are changed.
