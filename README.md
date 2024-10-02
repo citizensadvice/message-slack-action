@@ -33,7 +33,7 @@ To use this action, you need to provide a Slack bot token with the necessary per
 | `slack_bot_token` | Slack bot token                                                 | Yes      |
 
 > [!TIP]
-> For Citizens Advice repositories there is an organisation-wide secret `SLACK_BOT_TOKEN` which you can use in private repositories for `slack_bot_token` input. For example, `slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}`
+> For Citizens Advice repositories there is an organisation-wide secret `SLACK_BOT_TOKEN` which you can use in private repositories for `slack_bot_token` input.
 
 ## Outputs
 
