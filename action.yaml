@@ -62,9 +62,9 @@ runs:
     - name: Notify Slack
       id: deployment_message
       uses: slackapi/slack-github-action@v2.0.0
-      env:
-        SLACK_BOT_TOKEN: ${{ inputs.slack_bot_token }}
       with:
+        method: chat.postMessage
+        token: ${{ inputs.slack_bot_token }}
         payload: |
           unfurl_links: false
           unfurl_media: false
@@ -127,9 +127,9 @@ runs:
     - name: Comment Failing Jobs
       uses: slackapi/slack-github-action@v2.0.0
       if: steps.failing_jobs.outputs.jobs != ''
-      env:
-        SLACK_BOT_TOKEN: ${{ inputs.slack_bot_token }}
       with:
+        method: chat.postMessage
+        token: ${{ inputs.slack_bot_token }}
         payload: |
           channel: ${{ inputs.channel_id }}
           thread_ts: ${{ steps.deployment_message.outputs.ts }}
