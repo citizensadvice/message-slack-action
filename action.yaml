@@ -61,7 +61,7 @@ runs:
 
     - name: Notify Slack
       id: deployment_message
-      uses: slackapi/slack-github-action@v1.27.0
+      uses: slackapi/slack-github-action@v2.0.0
       env:
         SLACK_BOT_TOKEN: ${{ inputs.slack_bot_token }}
       with:
@@ -156,7 +156,7 @@ runs:
             # - It's more robust and maintainable than trying to format the text after the fact.
 
     - name: Comment Failing Jobs
-      uses: slackapi/slack-github-action@v1.27.0
+      uses: slackapi/slack-github-action@v2.0.0
       if: steps.failing_jobs.outputs.jobs != ''
       env:
         SLACK_BOT_TOKEN: ${{ inputs.slack_bot_token }}
