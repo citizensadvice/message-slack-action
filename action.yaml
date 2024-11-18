@@ -61,76 +61,45 @@ runs:
 
     - name: Notify Slack
       id: deployment_message
-      uses: slackapi/slack-github-action@v1.27.0
+      uses: slackapi/slack-github-action@v2.0.0
       env:
         SLACK_BOT_TOKEN: ${{ inputs.slack_bot_token }}
       with:
-        channel-id: '${{ inputs.channel_id }}'
         payload: |
-          {
-            "unfurl_links": false,
-            "unfurl_media": false,
-            "text": "${{ inputs.title }}",
-            "blocks": [
-              {
-                "type": "header",
-                "text": {
-                  "type": "plain_text",
-                  "text": "${{ inputs.title }}",
-                  "emoji": true
-                }
-              },
-              {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": ${{ toJson(inputs.message) }}
-                }
-              },
-              {
-                "type": "divider"
-              },
-              {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": "*Head Commit Message:*\n```${{ steps.commit.outputs.message }}```"
-                }
-              },
-              {
-                "type": "divider"
-              },
-              {
-                "type": "section",
-                "fields": [
-                  {
-                    "type": "mrkdwn",
-                    "text": "*Event:*\n${{ github.event_name	}}"
-                  },
-                  {
-                    "type": "mrkdwn",
-                    "text": "*Triggered By:*\n<${{ steps.triggering-actor.outputs.url }}|${{ github.triggering_actor }}>"
-                  },
-                  {
-                    "type": "mrkdwn",
-                    "text": "*Ref:*\n${{ github.ref_type }} <${{ github.server_url }}/${{ github.repository }}/tree/${{ github.ref_name }}|${{ github.ref_name }}>"
-                  },
-                  {
-                    "type": "mrkdwn",
-                    "text": "*Workflow:*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.workflow }}>"
-                  },
-                  {
-                    "type": "mrkdwn",
-                    "text": "*Commit:*\n<${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}|${{ steps.hash.outputs.hash }}>"
-                  },
-                  {
-                    "type": "mrkdwn",
-                    "text": "*Commit Author:*\n<${{ steps.author.outputs.url }}|${{ steps.author.outputs.name }}>"
-                  }
-                ]
-              }
-            ]
-          }
+          unfurl_links: false
+          unfurl_media: false
+          channel: ${{ inputs.channel_id }}
+          text: ${{ inputs.title }}
+          blocks:
+            - type: header
+              text:
+                type: plain_text
+                text: ${{ inputs.title }}
+                emoji: true
+            - type: section
+              text:
+                type: mrkdwn
+                text: ${{ toJson(inputs.message) }}
+            - type: divider
+            - type: section
+              text:
+                type: mrkdwn
+                text: "*Head Commit Message:*\n```${{ steps.commit.outputs.message }}```"
+            - type: divider
+            - type: section
+              fields:
+                - type: mrkdwn
+                  text: "*Event:*\n${{ github.event_name	}}"
+                - type: mrkdwn
+                  text: "*Triggered By:*\n<${{ steps.triggering-actor.outputs.url }}|${{ github.triggering_actor }}>"
+                - type: mrkdwn
+                  text: "*Ref:*\n${{ github.ref_type }} <${{ github.server_url }}/${{ github.repository }}/tree/${{ github.ref_name }}|${{ github.ref_name }}>"
+                - type: mrkdwn
+                  text: "*Workflow:*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.workflow }}>"
+                - type: mrkdwn
+                  text: "*Commit:*\n<${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}|${{ steps.hash.outputs.hash }}>"
+                - type: mrkdwn
+                  text: "*Commit Author:*\n<${{ steps.author.outputs.url }}|${{ steps.author.outputs.name }}>"
     
     - name: Find Failing Jobs
       shell: bash
@@ -156,25 +125,20 @@ runs:
             # - It's more robust and maintainable than trying to format the text after the fact.
 
     - name: Comment Failing Jobs
-      uses: slackapi/slack-github-action@v1.27.0
+      uses: slackapi/slack-github-action@v2.0.0
       if: steps.failing_jobs.outputs.jobs != ''
       env:
         SLACK_BOT_TOKEN: ${{ inputs.slack_bot_token }}
       with:
-        channel-id: '${{ inputs.channel_id }}'
         payload: |
-          {
-            "thread_ts": "${{ steps.deployment_message.outputs.ts }}",
-            "unfurl_links": false,
-            "unfurl_media": false,
-            "text": "Failing Jobs:",
-            "blocks": [
-              {
-                "type": "header",
-                "text": {
-                  "type": "plain_text",
-                  "text": "Failing Jobs:"
-                }
-              },${{ steps.failing_jobs.outputs.jobs }}
-            ]
-          }
+          channel: ${{ inputs.channel_id }}
+          thread_ts: ${{ steps.deployment_message.outputs.ts }}
+          unfurl_links: false
+          unfurl_media: false
+          text: "Failing Jobs:"
+          blocks:
+            - type: header
+              text:
+                type: plain_text
+                text: "Failing Jobs:"
+            ${{ steps.failing_jobs.outputs.jobs }}
