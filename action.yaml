@@ -69,17 +69,17 @@ runs:
           unfurl_links: false
           unfurl_media: false
           channel: ${{ inputs.channel_id }}
-          text: ${{ inputs.title }}
+          text: "${{ inputs.title }}"
           blocks:
             - type: header
               text:
                 type: plain_text
-                text: ${{ inputs.title }}
+                text: "${{ inputs.title }}"
                 emoji: true
             - type: section
               text:
                 type: mrkdwn
-                text: ${{ toJson(inputs.message) }}
+                text: "${{ toJson(inputs.message) }}"
             - type: divider
             - type: section
               text:
