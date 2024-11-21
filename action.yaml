@@ -79,7 +79,7 @@ runs:
             - type: section
               text:
                 type: mrkdwn
-                text: "${{ toJson(inputs.message) }}"
+                text: "${{ inputs.message }}"
             - type: divider
             - type: section
               text:
