@@ -107,22 +107,20 @@ runs:
       env:
         GH_TOKEN: ${{ inputs.github_token }}
       run: |
-        echo jobs=$(gh run view ${{ github.run_id }} --repo ${{ github.repository }} --json jobs | jq '.jobs[] | select(.conclusion == "failure")' | jq -rsc '[.[] | {"type": "section", "text": {"type": "mrkdwn", "text": "• <\(.url)|\(.name)>"}}]' | sed 's/[][]//g') >> $GITHUB_OUTPUT
-            # Explanation of this approach:
-            # 1. Use GitHub CLI to fetch job information for the current workflow run.
-            # 2. Use jq to filter out only the failed jobs.
-            # 3. Use jq again to transform each failed job into a Slack block format:
-            #    - Create a "section" block for each job
-            #    - Use "mrkdwn" text type to allow for formatting
-            #    - Format each job as a bullet point with a clickable link
-            # 4. The -rsc options in jq ensure raw output (-r), slurp input (-s), and compact output (-c).
-            # 5. Use sed to remove outer square brackets, allowing direct insertion into Slack payload.
-            # 
-            # This approach was chosen because:
-            # - It handles formatting and structure in a single step, reducing complexity.
-            # - It directly creates Slack-compatible block structures, ensuring correct formatting in Slack.
-            # - It avoids issues with newline characters and JSON escaping.
-            # - It's more robust and maintainable than trying to format the text after the fact.
+        gh run view ${{ github.run_id }} --repo ${{ github.repository }} --json jobs > jobs.json
+
+        # Use python to parse the JSON and format the output as a yaml block
+        echo jobs=$(python <<EOF
+        import json
+
+        for job in json.load(open("jobs.json"))["jobs"]:
+            if job["conclusion"] == "failure":
+                print(f"""- type: section
+          text:
+            type: mrkdwn
+            text: \"• <{job['url']}|{job['name']}>\"""")
+        EOF
+      
 
     - name: Comment Failing Jobs
       uses: slackapi/slack-github-action@v2.0.0
