@@ -109,8 +109,7 @@ runs:
       run: |
         gh run view ${{ github.run_id }} --repo ${{ github.repository }} --json jobs > jobs.json
 
-        # Use python to parse the JSON and format the output as a yaml block
-        echo jobs=$(python <<EOF
+        tee format.py <<EOF
         import json
 
         for job in json.load(open("jobs.json"))["jobs"]:
@@ -118,9 +117,11 @@ runs:
                 print(f"""- type: section
           text:
             type: mrkdwn
-            text: \"• <{job['url']}|{job['name']}>\"""")
+            text: '• <{job['url']}|{job['name']}>'""")
         EOF
-      
+
+        echo jobs=$(python format.py) >> $GITHUB_OUTPUT
+
 
     - name: Comment Failing Jobs
       uses: slackapi/slack-github-action@v2.0.0

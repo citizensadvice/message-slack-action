@@ -83,7 +83,6 @@ jobs:
         with:
           title: 'Deployment Failed'
           message: 'The deployment has failed. Please check the details below.'
-          failure: 'true'
           channel_id: 'C0123456789'
           slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
