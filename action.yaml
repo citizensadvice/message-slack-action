@@ -111,13 +111,17 @@ runs:
 
         tee format.py <<EOF
         import json
+        from textwrap import dedent
 
         for job in json.load(open("jobs.json"))["jobs"]:
             if job["conclusion"] == "failure":
-                print(f"""- type: section
-          text:
-            type: mrkdwn
-            text: '• <{job['url']}|{job['name']}>'""")
+                print(
+                    dedent(f"""
+                    - type: section
+                      text:
+                        type: mrkdwn
+                        text: '• <{job['url']}|{job['name']}>'""").strip()
+                )
         EOF
         echo 'jobs<<EOF' >> $GITHUB_OUTPUT
         python format.py >> $GITHUB_OUTPUT
@@ -135,7 +139,7 @@ runs:
           thread_ts: ${{ steps.deployment_message.outputs.ts }}
           unfurl_links: false
           unfurl_media: false
-          text: "Failing Jobs:"
+          text: "Failing Jobs"
           blocks:
             - type: header
               text:
