@@ -119,8 +119,9 @@ runs:
             type: mrkdwn
             text: '• <{job['url']}|{job['name']}>'""")
         EOF
-
-        echo jobs=$(python format.py) >> $GITHUB_OUTPUT
+        echo 'jobs<<EOF' >> $GITHUB_OUTPUT
+        python format.py >> $GITHUB_OUTPUT
+        echo 'EOF' >> $GITHUB_OUTPUT
 
 
     - name: Comment Failing Jobs
