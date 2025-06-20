@@ -1,6 +1,6 @@
 name: Test Workflow
 
-on: 
+on:
   - workflow_dispatch
 
 env:
@@ -19,7 +19,21 @@ jobs:
           channel_id: ${{ env.TEST_CHANNEL }}
           slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-  
+
+  test-success-short:
+    name: Test Success Short
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Slack
+        uses: citizensadvice/message-slack-action@main
+        with:
+          title: 'Short Testing Message'
+          message: 'Testing the short message'
+          channel_id: ${{ env.TEST_CHANNEL }}
+          slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          message_length: 'short'
+
   fail-1:
     name: Test Failure
     runs-on: ubuntu-latest
@@ -27,7 +41,7 @@ jobs:
     steps:
       - name: Trigger failure
         run: exit 1
-  
+
   fail-2:
     name: Test Failure
     runs-on: ubuntu-latest
@@ -36,10 +50,18 @@ jobs:
       - name: Trigger failure
         run: exit 1
 
+  fail-short:
+    name: Test Failure
+    runs-on: ubuntu-latest
+    needs: test-success-short
+    steps:
+      - name: Trigger failure
+        run: exit 1
+
   test-failure:
     name: Test Failure
     runs-on: ubuntu-latest
-    needs: 
+    needs:
       - fail-1
       - fail-2
     if: always()
@@ -49,6 +71,22 @@ jobs:
         with:
           title: 'Testing Message'
           message: 'Testing the failure message'
+          channel_id: ${{ env.TEST_CHANNEL }}
+          slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+  test-failure-short:
+    name: Test Failure Short
+    runs-on: ubuntu-latest
+    needs:
+      - fail-short
+    if: always()
+    steps:
+      - name: Notify Slack
+        uses: citizensadvice/message-slack-action@main
+        with:
+          title: 'Testing Message'
+          message: 'Testing the short failure message'
           channel_id: ${{ env.TEST_CHANNEL }}
           slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
