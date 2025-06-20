@@ -1,8 +1,15 @@
 # Send Slack Notification Action
 
-**Send a notification to Slack in one action.** This action can be used to send customized notifications to Slack channels with information about the GitHub workflow run and job failures.
+**Send a notification to Slack in one action.** This action can be used to send customized notifications to Slack channels with information about the GitHub workflow run and job failures.  
+
+You can choose between long and short message format.  
+
+_Long message format_:
 
 ![Example Message](examples/message-example.png)
+
+_Short message format_:
+![Example Short Message](examples/short-message-example.png)
 
 By default, it will send a notification with the following information with links where available:
 
@@ -26,11 +33,12 @@ To use this action, you need to provide a Slack bot token with the necessary per
 ## Inputs
 
 | Input             | Description                                                     | Required |
-| ----------------- | --------------------------------------------------------------- | -------- |
+|-------------------|-----------------------------------------------------------------|----------|
 | `title`           | Title of the notification                                       | Yes      |
 | `message`         | Message body                                                    | Yes      |
 | `channel_id`      | Comma separated list of channel IDs to send the notification to | Yes      |
 | `slack_bot_token` | Slack bot token                                                 | Yes      |
+| `message_length`  | Choose short or long message format. Default is 'long'          | No       |
 
 > [!TIP]
 > For Citizens Advice repositories there is an organisation-wide secret `SLACK_BOT_TOKEN` which you can use in private repositories for `slack_bot_token` input.
