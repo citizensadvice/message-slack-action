@@ -62,13 +62,6 @@ runs:
       run: |
         echo url=$(gh api /users/${{ github.triggering_actor }} --jq '.html_url') >> "$GITHUB_OUTPUT"
 
-    - name: Temporary debugging step
-      shell: bash
-      id: debugging
-      env:
-        GH_TOKEN: ${{ inputs.github_token }}
-      run: echo "${{ inputs.message_length }}"
-
     - name: Notify Slack (long)
       if: ${{ inputs.message_length == 'long' }}
       id: deployment_message

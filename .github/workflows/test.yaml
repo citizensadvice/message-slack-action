@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Notify Slack
-        uses: citizensadvice/message-slack-action@feat/add-short-message-option
+        uses: citizensadvice/message-slack-action@main
         with:
           title: 'Testing Message'
           message: 'Testing the normal message'
@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Notify Slack
-        uses: citizensadvice/message-slack-action@feat/add-short-message-option
+        uses: citizensadvice/message-slack-action@main
         with:
           title: 'Short Testing Message'
           message: 'Testing the short message'
@@ -67,7 +67,7 @@ jobs:
     if: always()
     steps:
       - name: Notify Slack
-        uses: citizensadvice/message-slack-action@feat/add-short-message-option
+        uses: citizensadvice/message-slack-action@main
         with:
           title: 'Testing Message'
           message: 'Testing the failure message'
@@ -83,7 +83,7 @@ jobs:
     if: always()
     steps:
       - name: Notify Slack
-        uses: citizensadvice/message-slack-action@feat/add-short-message-option
+        uses: citizensadvice/message-slack-action@main
         with:
           title: 'Testing Message'
           message: 'Testing the short failure message'
