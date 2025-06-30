@@ -1,8 +1,15 @@
 # Send Slack Notification Action
 
-**Send a notification to Slack in one action.** This action can be used to send customized notifications to Slack channels with information about the GitHub workflow run and job failures.
+**Send a notification to Slack in one action.** This action can be used to send customized notifications to Slack channels with information about the GitHub workflow run and job failures.  
+
+You can choose between long and compact message format.  
+
+_Long message format_:
 
 ![Example Message](examples/message-example.png)
+
+_Compact message format_:
+![Example Compact Message](examples/compact-message-example.png)
 
 By default, it will send a notification with the following information with links where available:
 
@@ -31,15 +38,10 @@ To use this action, you need to provide a Slack bot token with the necessary per
 | `message`         | Message body                                                    | Yes      |
 | `channel_id`      | Comma separated list of channel IDs to send the notification to | Yes      |
 | `slack_bot_token` | Slack bot token                                                 | Yes      |
+| `compact`         | Enable compact message format. Default is 'true'                | No       |
 
 > [!TIP]
 > For Citizens Advice repositories there is an organisation-wide secret `SLACK_BOT_TOKEN` which you can use in private repositories for `slack_bot_token` input.
-
-## Outputs
-
-| Output       | Description             |
-| ------------ | ----------------------- |
-| `message_ts` | Slack message timestamp |
 
 ## Example usage
 
@@ -83,7 +85,6 @@ jobs:
         with:
           title: 'Deployment Failed'
           message: 'The deployment has failed. Please check the details below.'
-          failure: 'true'
           channel_id: 'C0123456789'
           slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
