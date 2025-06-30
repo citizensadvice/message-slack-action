@@ -22,11 +22,6 @@ inputs:
     required: false
     default: 'long'
 
-outputs:
-  message_ts:
-    description: Slack message timestamp
-    value: ${{ steps.deployment_message.outputs.message_ts }}
-
 runs:
   using: 'composite'
   steps:

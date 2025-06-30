@@ -33,7 +33,7 @@ To use this action, you need to provide a Slack bot token with the necessary per
 ## Inputs
 
 | Input             | Description                                                     | Required |
-|-------------------|-----------------------------------------------------------------|----------|
+| ----------------- | --------------------------------------------------------------- | -------- |
 | `title`           | Title of the notification                                       | Yes      |
 | `message`         | Message body                                                    | Yes      |
 | `channel_id`      | Comma separated list of channel IDs to send the notification to | Yes      |
@@ -42,12 +42,6 @@ To use this action, you need to provide a Slack bot token with the necessary per
 
 > [!TIP]
 > For Citizens Advice repositories there is an organisation-wide secret `SLACK_BOT_TOKEN` which you can use in private repositories for `slack_bot_token` input.
-
-## Outputs
-
-| Output       | Description             |
-| ------------ | ----------------------- |
-| `message_ts` | Slack message timestamp |
 
 ## Example usage
 
