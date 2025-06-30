@@ -150,25 +150,27 @@ runs:
         GH_TOKEN: ${{ inputs.github_token }}
       run: |
         echo jobs=$(gh run view ${{ github.run_id }} --repo ${{ github.repository }} --json jobs | jq '.jobs[] | select(.conclusion == "failure")' | jq -rsc '[{"type":"header","text":{"type":"plain_text","text":"Failing Jobs:"}}] + [.[] | {"type": "section", "text": {"type": "mrkdwn", "text": "• <\(.url)|\(.name)>"}}]') >> $GITHUB_OUTPUT
-            # Explanation of this approach:
-            # 1. Use GitHub CLI to fetch job information for the current workflow run.
-            # 2. Use jq to filter out only the failed jobs.
-            # 3. Use jq again to transform each failed job into a Slack block format:
-            #    - Create a "section" block for each job
-            #    - Use "mrkdwn" text type to allow for formatting
-            #    - Format each job as a bullet point with a clickable link
-            # 4. The -rsc options in jq ensure raw output (-r), slurp input (-s), and compact output (-c).
-            # 5. Add the header block to the output.
-            # 
-            # This approach was chosen because:
-            # - It handles formatting and structure in a single step, reducing complexity.
-            # - It directly creates Slack-compatible block structures, ensuring correct formatting in Slack.
-            # - It avoids issues with newline characters and JSON escaping.
-            # - It's more robust and maintainable than trying to format the text after the fact.
+
+        # Explanation of the above pipeline:
+        # 1. Use GitHub CLI to fetch job information for the current workflow run.
+        # 2. Use jq to filter out only the failed jobs.
+        # 3. Use jq again to transform each failed job into a Slack block format:
+        #    - Create a "header" block for the failing jobs.
+        #    - Create a "section" block for each job
+        #    - Use "mrkdwn" text type to allow for formatting
+        #    - Format each job as a bullet point with a clickable link
+        # 4. The -rsc options in jq ensure raw output (-r), slurp input (-s), and compact output (-c).
+        # 
+        # This approach was chosen because:
+        # - It handles formatting and structure in a single step, reducing complexity.
+        # - It directly creates Slack-compatible block structures, ensuring correct formatting in Slack.
+        # - It avoids issues with newline characters and JSON escaping.
+        # - It's more robust and maintainable than trying to format the text after the fact.
 
     - name: Comment Failing Jobs
       uses: slackapi/slack-github-action@v2.1.0
-      if: steps.failing_jobs.outputs.jobs != '[]'
+      # Only comment if there are failing jobs
+      if: steps.failing_jobs.outputs.jobs != '[{"type":"header","text":{"type":"plain_text","text":"Failing Jobs:"}}]'
       with:
         method: chat.postMessage
         token: ${{ inputs.slack_bot_token }}
