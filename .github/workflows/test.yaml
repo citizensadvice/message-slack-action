@@ -11,8 +11,9 @@ jobs:
     name: Test Success
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - name: Notify Slack
-        uses: citizensadvice/message-slack-action@main
+        uses: ./
         with:
           title: 'Testing Message'
           message: 'Testing the normal message'
@@ -24,8 +25,9 @@ jobs:
     name: Test Success Short
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - name: Notify Slack
-        uses: citizensadvice/message-slack-action@main
+        uses: ./
         with:
           title: 'Short Testing Message'
           message: 'Testing the short message'
@@ -66,8 +68,9 @@ jobs:
       - fail-2
     if: always()
     steps:
+      - uses: actions/checkout@v4
       - name: Notify Slack
-        uses: citizensadvice/message-slack-action@main
+        uses: ./
         with:
           title: 'Testing Message'
           message: 'Testing the failure message'
@@ -82,8 +85,9 @@ jobs:
       - fail-short
     if: always()
     steps:
+      - uses: actions/checkout@v4
       - name: Notify Slack
-        uses: citizensadvice/message-slack-action@main
+        uses: ./
         with:
           title: 'Testing Message'
           message: 'Testing the short failure message'
