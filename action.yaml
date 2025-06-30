@@ -17,10 +17,10 @@ inputs:
   github_token:
     description: Github token
     required: true
-  message_length:
-    description: Set slack message length short or long
+  compact:
+    description: Use compact message format
     required: false
-    default: 'long'
+    default: 'true'
 
 runs:
   using: 'composite'
@@ -57,8 +57,9 @@ runs:
       run: |
         echo url=$(gh api /users/${{ github.triggering_actor }} --jq '.html_url') >> "$GITHUB_OUTPUT"
 
-    - name: Notify Slack (long)
-      if: ${{ inputs.message_length == 'long' }}
+    - name: Notify Slack
+      # Long message format
+      if: ${{ inputs.compact == 'false' }}
       id: deployment_message
       uses: slackapi/slack-github-action@v2.1.0
       with:
@@ -100,8 +101,9 @@ runs:
                 - type: mrkdwn
                   text: "*Commit Author:*\n<${{ steps.author.outputs.url }}|${{ steps.author.outputs.name }}>"
 
-    - name: Notify Slack (short)
-      if: ${{ inputs.message_length == 'short' }}
+    - name: Notify Slack
+      # Compact message format
+      if: ${{ inputs.compact == 'true' }}
       id: deployment_message_short
       uses: slackapi/slack-github-action@v2.1.0
       with:
@@ -164,7 +166,7 @@ runs:
             # - It avoids issues with newline characters and JSON escaping.
             # - It's more robust and maintainable than trying to format the text after the fact.
 
-    - name: Comment Failing Jobs (long) # comments on long slack notification
+    - name: Comment Failing Jobs
       uses: slackapi/slack-github-action@v2.1.0
       if: steps.failing_jobs.outputs.jobs != ''
       with:
@@ -172,7 +174,7 @@ runs:
         token: ${{ inputs.slack_bot_token }}
         payload: |
           channel: ${{ inputs.channel_id }}
-          thread_ts: ${{ steps.deployment_message.outputs.ts }}
+          thread_ts: ${{ steps.deployment_message.outputs.ts || steps.deployment_message_short.outputs.ts }}
           unfurl_links: false
           unfurl_media: false
           text: "Failing Jobs:"
@@ -183,21 +185,21 @@ runs:
                 text: "Failing Jobs:"
             ${{ steps.failing_jobs.outputs.jobs }}
 
-    - name: Comment Failing Jobs (short) # comments on short slack notification
-      uses: slackapi/slack-github-action@v2.1.0
-      if: steps.failing_jobs.outputs.jobs != ''
-      with:
-        method: chat.postMessage
-        token: ${{ inputs.slack_bot_token }}
-        payload: |
-          channel: ${{ inputs.channel_id }}
-          thread_ts: ${{ steps.deployment_message_short.outputs.ts }}
-          unfurl_links: false
-          unfurl_media: false
-          text: "Failing Jobs:"
-          blocks:
-            - type: header
-              text:
-                type: plain_text
-                text: "Failing Jobs:"
-            ${{ steps.failing_jobs.outputs.jobs }}
+    # - name: Comment Failing Jobs (short) # comments on short slack notification
+    #   uses: slackapi/slack-github-action@v2.1.0
+    #   if: steps.failing_jobs.outputs.jobs != ''
+    #   with:
+    #     method: chat.postMessage
+    #     token: ${{ inputs.slack_bot_token }}
+    #     payload: |
+    #       channel: ${{ inputs.channel_id }}
+    #       thread_ts: ${{ steps.deployment_message_short.outputs.ts }}
+    #       unfurl_links: false
+    #       unfurl_media: false
+    #       text: "Failing Jobs:"
+    #       blocks:
+    #         - type: header
+    #           text:
+    #             type: plain_text
+    #             text: "Failing Jobs:"
+    #         ${{ steps.failing_jobs.outputs.jobs }}
