@@ -104,7 +104,7 @@ runs:
     - name: Notify Slack
       # Compact message format
       if: ${{ inputs.compact == 'true' }}
-      id: deployment_message_short
+      id: deployment_message_compact
       uses: slackapi/slack-github-action@v2.1.0
       with:
         method: chat.postMessage
@@ -174,7 +174,7 @@ runs:
         token: ${{ inputs.slack_bot_token }}
         payload: |
           channel: ${{ inputs.channel_id }}
-          thread_ts: ${{ steps.deployment_message.outputs.ts || steps.deployment_message_short.outputs.ts }}
+          thread_ts: ${{ steps.deployment_message.outputs.ts || steps.deployment_message_compact.outputs.ts }}
           unfurl_links: false
           unfurl_media: false
           text: "Failing Jobs:"

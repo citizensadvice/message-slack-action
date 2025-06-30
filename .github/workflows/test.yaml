@@ -21,20 +21,20 @@ jobs:
           slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-  test-success-short:
-    name: Test Success Short
+  test-success-compact:
+    name: Test Success compact
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Notify Slack
         uses: ./
         with:
-          title: 'Short Testing Message'
-          message: 'Testing the short message'
+          title: 'Compact Testing Message'
+          message: 'Testing the compact message'
           channel_id: ${{ env.TEST_CHANNEL }}
           slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          message_length: 'short'
+          compact: true
 
   fail-1:
     name: Test Failure
@@ -52,10 +52,10 @@ jobs:
       - name: Trigger failure
         run: exit 1
 
-  fail-short:
+  fail-compact:
     name: Test Failure
     runs-on: ubuntu-latest
-    needs: test-success-short
+    needs: test-success-compact
     steps:
       - name: Trigger failure
         run: exit 1
@@ -78,11 +78,11 @@ jobs:
           slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-  test-failure-short:
-    name: Test Failure Short
+  test-failure-compact:
+    name: Test Failure Message Compact
     runs-on: ubuntu-latest
     needs:
-      - fail-short
+      - fail-compact
     if: always()
     steps:
       - uses: actions/checkout@v4
@@ -90,7 +90,8 @@ jobs:
         uses: ./
         with:
           title: 'Testing Message'
-          message: 'Testing the short failure message'
+          message: 'Testing the compact failure message'
           channel_id: ${{ env.TEST_CHANNEL }}
           slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          compact: true
