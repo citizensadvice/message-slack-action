@@ -149,7 +149,7 @@ runs:
       env:
         GH_TOKEN: ${{ inputs.github_token }}
       run: |
-        echo jobs=$(gh run view ${{ github.run_id }} --repo ${{ github.repository }} --json jobs | jq '.jobs[] | select(.conclusion == "failure")' | jq -rsc '[.[] | {"type": "section", "text": {"type": "mrkdwn", "text": "• <\(.url)|\(.name)>"}}]' | sed 's/[][]//g') >> $GITHUB_OUTPUT
+        echo jobs=$(gh run view ${{ github.run_id }} --repo ${{ github.repository }} --json jobs | jq '.jobs[] | select(.conclusion == "failure")' | jq -rsc '[{"type":"header","text":{"type":"plain_text","text":"Failing Jobs:"}}] + [.[] | {"type": "section", "text": {"type": "mrkdwn", "text": "• <\(.url)|\(.name)>"}}]') >> $GITHUB_OUTPUT
             # Explanation of this approach:
             # 1. Use GitHub CLI to fetch job information for the current workflow run.
             # 2. Use jq to filter out only the failed jobs.
@@ -158,7 +158,7 @@ runs:
             #    - Use "mrkdwn" text type to allow for formatting
             #    - Format each job as a bullet point with a clickable link
             # 4. The -rsc options in jq ensure raw output (-r), slurp input (-s), and compact output (-c).
-            # 5. Use sed to remove outer square brackets, allowing direct insertion into Slack payload.
+            # 5. Add the header block to the output.
             # 
             # This approach was chosen because:
             # - It handles formatting and structure in a single step, reducing complexity.
@@ -168,7 +168,7 @@ runs:
 
     - name: Comment Failing Jobs
       uses: slackapi/slack-github-action@v2.1.0
-      if: steps.failing_jobs.outputs.jobs != ''
+      if: steps.failing_jobs.outputs.jobs != '[]'
       with:
         method: chat.postMessage
         token: ${{ inputs.slack_bot_token }}
@@ -178,28 +178,4 @@ runs:
           unfurl_links: false
           unfurl_media: false
           text: "Failing Jobs:"
-          blocks:
-            - type: header
-              text:
-                type: plain_text
-                text: "Failing Jobs:"
-            ${{ steps.failing_jobs.outputs.jobs }}
-
-    # - name: Comment Failing Jobs (short) # comments on short slack notification
-    #   uses: slackapi/slack-github-action@v2.1.0
-    #   if: steps.failing_jobs.outputs.jobs != ''
-    #   with:
-    #     method: chat.postMessage
-    #     token: ${{ inputs.slack_bot_token }}
-    #     payload: |
-    #       channel: ${{ inputs.channel_id }}
-    #       thread_ts: ${{ steps.deployment_message_short.outputs.ts }}
-    #       unfurl_links: false
-    #       unfurl_media: false
-    #       text: "Failing Jobs:"
-    #       blocks:
-    #         - type: header
-    #           text:
-    #             type: plain_text
-    #             text: "Failing Jobs:"
-    #         ${{ steps.failing_jobs.outputs.jobs }}
+          blocks: ${{ steps.failing_jobs.outputs.jobs }}
