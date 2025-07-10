@@ -36,6 +36,21 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           compact: true
 
+  test-success-custom-commit-sha:
+    name: Test Success Custom Commit SHA
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Notify Slack
+        uses: ./
+        with:
+          title: 'Testing Message'
+          message: 'Testing the normal message with a custom commit SHA'
+          channel_id: ${{ env.TEST_CHANNEL }}
+          slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          commit_sha: f6416b36c1218182210cf4d383d8ae1652249084
+
   fail-1:
     name: Test Failure 1
     runs-on: ubuntu-latest
