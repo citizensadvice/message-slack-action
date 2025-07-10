@@ -32,13 +32,14 @@ To use this action, you need to provide a Slack bot token with the necessary per
 
 ## Inputs
 
-| Input             | Description                                                     | Required |
-| ----------------- | --------------------------------------------------------------- | -------- |
-| `title`           | Title of the notification                                       | Yes      |
-| `message`         | Message body                                                    | Yes      |
-| `channel_id`      | Comma separated list of channel IDs to send the notification to | Yes      |
-| `slack_bot_token` | Slack bot token                                                 | Yes      |
-| `compact`         | Enable compact message format. Default is 'true'                | No       |
+| Input             | Description                                                                                       | Required |
+| ----------------- | ------------------------------------------------------------------------------------------------- | -------- |
+| `title`           | Title of the notification                                                                         | Yes      |
+| `message`         | Message body                                                                                      | Yes      |
+| `channel_id`      | Comma separated list of channel IDs to send the notification to                                   | Yes      |
+| `slack_bot_token` | Slack bot token                                                                                   | Yes      |
+| `compact`         | Enable compact message format. Default is 'true'                                                  | No       |
+| `commit_sha`      | Overwrite the commit SHA to use for the notification. Defaults to commit SHA of the workflow run. | No       |
 
 > [!TIP]
 > For Citizens Advice repositories there is an organisation-wide secret `SLACK_BOT_TOKEN` which you can use in private repositories for `slack_bot_token` input.
