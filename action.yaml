@@ -65,7 +65,7 @@ runs:
       # Long message format
       if: ${{ inputs.compact == 'false' }}
       id: deployment_message
-      uses: slackapi/slack-github-action@45a88b9581bfab2566dc881e2cd66d334e621e2c
+      uses: slackapi/slack-github-action@0d95c9a7becc1e6e297d76df9bc735c44f4cbcbc
       with:
         method: chat.postMessage
         token: ${{ inputs.slack_bot_token }}
@@ -109,7 +109,7 @@ runs:
       # Compact message format
       if: ${{ inputs.compact == 'true' }}
       id: deployment_message_compact
-      uses: slackapi/slack-github-action@45a88b9581bfab2566dc881e2cd66d334e621e2c
+      uses: slackapi/slack-github-action@0d95c9a7becc1e6e297d76df9bc735c44f4cbcbc
       with:
         method: chat.postMessage
         token: ${{ inputs.slack_bot_token }}
@@ -172,7 +172,7 @@ runs:
         # - It's more robust and maintainable than trying to format the text after the fact.
 
     - name: Comment Failing Jobs
-      uses: slackapi/slack-github-action@45a88b9581bfab2566dc881e2cd66d334e621e2c
+      uses: slackapi/slack-github-action@0d95c9a7becc1e6e297d76df9bc735c44f4cbcbc
       # Only comment if there are failing jobs
       if: steps.failing_jobs.outputs.jobs != '[{"type":"header","text":{"type":"plain_text","text":"Failing Jobs:"}}]'
       with:
